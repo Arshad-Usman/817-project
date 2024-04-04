@@ -161,8 +161,11 @@ public class ATMClient {
         }
 
         // Read and display server response for valid actions
+        System.out.println("\nReading Server Response....");
         String serverResponse = in.readLine();
+        System.out.println("\nServer response received....");
         System.out.println(serverResponse);
+        System.out.println("\nFunctionality Successful!");
     }
 
     private static void logAction(String action, String amount) {

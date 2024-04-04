@@ -86,6 +86,7 @@ public class BankServer {
                             } else {
                                 out.println("ERROR: You need to log in first.");
                             }
+                            out.println("OK");
                             break;
                         
                     // IT DOESNT WANT TO GO BACK TO THE SELECT AN ACTION PROMPT
@@ -107,6 +108,7 @@ public class BankServer {
                             } else {
                                 out.println("ERROR: You need to log in first.");
                             }
+                            out.println("OK");
                             break;
                         
                      // IT DOESNT WANT TO GO BACK TO THE SELECT AN ACTION PROMPT
@@ -142,6 +144,7 @@ public class BankServer {
                             } else {
                                 out.println("ERROR: You need to log in first.");
                             }
+                            out.println("OK");
                             break;
                         
                     }
