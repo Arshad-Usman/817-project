@@ -17,9 +17,13 @@ public class BankServer {
     private static Map<String, SecretKey> masterSecrets = new ConcurrentHashMap<>();
     private static Map<String, Double> accountBalances = new ConcurrentHashMap<>();
     private static final String ALGORITHM = "AES/ECB/PKCS5Padding";
+    private static final String MAC_ALGORITHM = "HmacSHA256"; // HMAC algorithm for MAC
     private static final String keyString = "mySimpleSharedKey";
     private static final byte[] keyBytes = keyString.getBytes(StandardCharsets.UTF_8);
     private static final SecretKey sharedKey = new SecretKeySpec(Arrays.copyOf(keyBytes, 16), "AES");
+
+    // New secret key for MAC
+    private static final SecretKey macKey = new SecretKeySpec(Arrays.copyOf(keyBytes, 16), MAC_ALGORITHM);
 
     public static void main(String[] args) {
         try (ServerSocket serverSocket = new ServerSocket(PORT)) {
@@ -76,8 +80,10 @@ public class BankServer {
                                 String balanceMessage = "Your account balance is: $" + balance;
                                 try {
                                     String encryptedBalanceMessage = encrypt(balanceMessage, sharedKey);
+                                    String mac = generateMAC(encryptedBalanceMessage, macKey);//mac
                                     System.out.println("Encrypted balance message to send: " + encryptedBalanceMessage); // Debugging purpose
                                     out.println(encryptedBalanceMessage);
+                                    out.println(mac);
                                 } catch (Exception e) {
                                     System.out.println("Encryption error: " + e.getMessage());
                                     e.printStackTrace();
@@ -98,8 +104,10 @@ public class BankServer {
                                 // Encrypt the deposit message
                                 try {
                                     String encryptedDepositMessage = encrypt(depositMessage, sharedKey);
+                                    String mac = generateMAC(encryptedDepositMessage, macKey);//mac
                                     System.out.println("Encrypted deposit message: " + encryptedDepositMessage); // Print the encrypted message for demonstration
                                     out.println(encryptedDepositMessage); // Send the encrypted message
+                                    out.println(mac);
                                 } catch (Exception e) {
                                     System.out.println("Encryption error: " + e.getMessage());
                                     e.printStackTrace();
@@ -123,8 +131,10 @@ public class BankServer {
                                     // Encrypt the withdraw message
                                     try {
                                         String encryptedWithdrawMessage = encrypt(withdrawMessage, sharedKey);
+                                        String mac = generateMAC(encryptedWithdrawMessage, macKey);//mac
                                         System.out.println("Encrypted withdraw message: " + encryptedWithdrawMessage); // Print the encrypted message for demonstration
                                         out.println(encryptedWithdrawMessage); // Send the encrypted message
+                                        out.println(mac);
                                     } catch (Exception e) {
                                         System.out.println("Encryption error: " + e.getMessage());
                                         e.printStackTrace();
@@ -134,8 +144,10 @@ public class BankServer {
                                     String error = "ERROR: Insufficient funds.";
                                     try {
                                         String encryptedErrorMessage = encrypt(error, sharedKey);
+                                        String mac = generateMAC(encryptedErrorMessage, macKey);
                                         System.out.println("Encrypted error message: " + encryptedErrorMessage); // Print the encrypted message for demonstration
                                         out.println(encryptedErrorMessage);
+                                        out.println(mac);
                                     } catch (Exception e) {
                                         System.out.println("Encryption error: " + e.getMessage());
                                         e.printStackTrace();
@@ -216,6 +228,13 @@ public class BankServer {
             cipher.init(Cipher.ENCRYPT_MODE, key);
             byte[] encryptedBytes = cipher.doFinal(data.getBytes());
             return Base64.getEncoder().encodeToString(encryptedBytes);
+        }
+
+        private String generateMAC(String data, SecretKey key) throws Exception {
+            Mac mac = Mac.getInstance(MAC_ALGORITHM);
+            mac.init(key);
+            byte[] macBytes = mac.doFinal(data.getBytes());
+            return Base64.getEncoder().encodeToString(macBytes);
         }
     }
 }
