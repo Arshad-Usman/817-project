@@ -17,12 +17,10 @@ public class BankServer {
     private static Map<String, SecretKey> masterSecrets = new ConcurrentHashMap<>();
     private static Map<String, Double> accountBalances = new ConcurrentHashMap<>();
     private static final String ALGORITHM = "AES/ECB/PKCS5Padding";
-    private static final String MAC_ALGORITHM = "HmacSHA256"; // HMAC algorithm for MAC
+    private static final String MAC_ALGORITHM = "HmacSHA256"; 
     private static final String keyString = "mySimpleSharedKey";
     private static final byte[] keyBytes = keyString.getBytes(StandardCharsets.UTF_8);
     private static final SecretKey sharedKey = new SecretKeySpec(Arrays.copyOf(keyBytes, 16), "AES");
-
-    // New secret key for MAC
     private static final SecretKey macKey = new SecretKeySpec(Arrays.copyOf(keyBytes, 16), MAC_ALGORITHM);
 
     public static void main(String[] args) {
@@ -72,8 +70,6 @@ public class BankServer {
                             logAction("QUIT", "QUIT", "QUIT");
                             return; // Exit the thread
 
-                     // IT DOESNT WANT TO GO BACK TO THE SELECT AN ACTION PROMPT
-
                         case "VIEW BALANCE":
                             if (username != null && userDatabase.containsKey(username)) {
                                 double balance = accountBalances.getOrDefault(username, 0.0);
@@ -95,7 +91,6 @@ public class BankServer {
                             out.println("OK");
                             break;
                         
-                    // IT DOESNT WANT TO GO BACK TO THE SELECT AN ACTION PROMPT
                         case "DEPOSIT":
                             double amount = Double.parseDouble(in.readLine());
                             if (username != null && userDatabase.containsKey(username)) {
@@ -118,8 +113,6 @@ public class BankServer {
                             }
                             out.println("OK");
                             break;
-                        
-                     // IT DOESNT WANT TO GO BACK TO THE SELECT AN ACTION PROMPT
 
                         case "WITHDRAW":
                             amount = Double.parseDouble(in.readLine());

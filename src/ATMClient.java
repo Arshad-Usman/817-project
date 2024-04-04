@@ -14,12 +14,10 @@ public class ATMClient {
     private static final String SERVER_ADDRESS = "localhost";
     private static final int SERVER_PORT = 12345;
     private static final String ALGORITHM = "AES/ECB/PKCS5Padding";
-    private static final String MAC_ALGORITHM = "HmacSHA256"; // HMAC algorithm for MAC
+    private static final String MAC_ALGORITHM = "HmacSHA256"; 
     private static final String keyString = "mySimpleSharedKey";
     private static final byte[] keyBytes = keyString.getBytes(StandardCharsets.UTF_8);
     private static final SecretKey sharedKey = new SecretKeySpec(Arrays.copyOf(keyBytes, 16), "AES");
-
-    // New secret key for MAC
     private static final SecretKey macKey = new SecretKeySpec(Arrays.copyOf(keyBytes, 16), MAC_ALGORITHM);
 
     public static void main(String[] args) {
@@ -105,8 +103,6 @@ public class ATMClient {
             throws IOException {
         switch (action) {
 
-        // IT DOESNT WANT TO GO BACK TO THE SELECT AN ACTION PROMPT
-
             case "3": // VIEW BALANCE
                 out.println("VIEW BALANCE");
                 String encryptedResponse = in.readLine(); // Receive encrypted balance
@@ -128,8 +124,6 @@ public class ATMClient {
                     e.printStackTrace();
                 }
                 break;
-
-         // IT DOESNT WANT TO GO BACK TO THE SELECT AN ACTION PROMPT
 
             case "4": // DEPOSIT
                 System.out.println("Enter amount to deposit:");
@@ -156,9 +150,6 @@ public class ATMClient {
                     e.printStackTrace();
                 }
                 break;
-            
-
-         // IT DOESNT WANT TO GO BACK TO THE SELECT AN ACTION PROMPT
 
             case "5": // WITHDRAW
                 System.out.println("Enter amount to withdraw:");
